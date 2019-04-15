@@ -7,8 +7,8 @@ class mipsMounter(object):
         self.outputFilename = outputFilename
 
     def printFilenames(self):
-        print("Arquivo de entrada:", self.inputFilename)
-        print("Arquivo de saída:", self.outputFilename)
+        print("Input filename:", self.inputFilename)
+        print("Output filename", self.outputFilename)
 
     @staticmethod
     def __intToBinary(n, bits):
@@ -33,16 +33,29 @@ class mipsMounter(object):
 
     @staticmethod
     def __numToBinary(n, bits):
-        return mipsMounter.__NumToTc(int(n), bits)
+        if str(n).startswith("0x") or str(n).startswith("0X"):
+            return mipsMounter.__NumToTc(int(n[2:], 15), bits)
+
+        if str(n).startswith("0o") or str(n).startswith("0o"):
+            return mipsMounter.__NumToTc(int(n[2:], 8), bits)
+
+        if str(n).startswith("0o") or str(n).startswith("0b"):
+            return mipsMounter.__NumToTc(int(n[2:], 2), bits)
+
+        if str(n).isnumeric():
+            return mipsMounter.__NumToTc(int(n), bits) #The general case deals with decimal numbers
 
     @staticmethod
     def __regToBin(reg):
+
         if reg=="$zero":
             return "00000"
+
         elif reg[1]=="s":
             index = int(reg[2:])
             if 0<=index<=7:
                 return mipsMounter.__numToBinary(int(reg[2:]) + 16, 5)
+
         elif reg[1]=="t":
             index = int(reg[2:])
             if 0<=index<=7:
@@ -64,8 +77,65 @@ class mipsMounter(object):
                         if len(parameters)!=3: #COLOCAR O PRINT AQUI
                             sys.exit()
 
-                        print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "100000")
-                        output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "100000\n")
+                        print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100000")
+                        output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100000\n")
+
+                    elif "sub" == instruction:
+                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                            sys.exit()
+
+                        print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100010")
+                        output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100010\n")
+
+                    elif "and" == instruction:
+                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                            sys.exit()
+
+                        print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100100")
+                        output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100100\n")
+
+                    elif "or" == instruction:
+                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                            sys.exit()
+
+                        print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100101")
+                        output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100101\n")
+
+                    elif "nor" == instruction:
+                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                            sys.exit()
+
+                        print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100111")
+                        output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100111\n")
+
+                    elif "addi" == instruction:
+                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                            sys.exit()
+
+                        print("001000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
+                        output.write("001000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
+
+                    elif "andi" == instruction:
+                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                            sys.exit()
+
+                        print("001100" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
+                        output.write("001100" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
+
+                    elif "ori" == instruction:
+                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                            sys.exit()
+
+                        print("001101" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
+                        output.write("001101" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
+
+                    # PSEUDO INSTRUCTIONS BELOW
+                    elif "move" == instruction:
+                        if len(parameters)!=2: #COLOCAR O PRINT AQUI
+                            sys.exit()
+
+                        print("000000" + mipsMounter.__regToBin(parameters[0]) + "00000" + mipsMounter.__regToBin(parameters[1]) + "00000100000")
+                        output.write("000000" + mipsMounter.__regToBin(parameters[0]) + "00000" + mipsMounter.__regToBin(parameters[1]) + "00000100000")
 
 a=mipsMounter("fibonnaci.asm", "fibonnaci.bin")
 a.mount()
