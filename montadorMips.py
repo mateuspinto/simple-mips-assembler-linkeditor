@@ -74,64 +74,89 @@ class mipsMounter(object):
                         parameters[i] = parameters[i].strip()
                     
                     if "add" == instruction:
-                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
                             sys.exit()
 
                         print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100000")
                         output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100000\n")
 
                     elif "sub" == instruction:
-                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
                             sys.exit()
 
                         print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100010")
                         output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100010\n")
 
                     elif "and" == instruction:
-                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
                             sys.exit()
 
                         print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100100")
                         output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100100\n")
 
                     elif "or" == instruction:
-                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
                             sys.exit()
 
                         print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100101")
                         output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100101\n")
 
                     elif "nor" == instruction:
-                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
                             sys.exit()
 
                         print("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100111")
                         output.write("000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__regToBin(parameters[2]) + "00000100111\n")
 
                     elif "addi" == instruction:
-                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
                             sys.exit()
 
                         print("001000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
                         output.write("001000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
 
                     elif "andi" == instruction:
-                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
                             sys.exit()
 
                         print("001100" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
                         output.write("001100" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
 
                     elif "ori" == instruction:
-                        if len(parameters)!=3: #COLOCAR O PRINT AQUI
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
                             sys.exit()
 
                         print("001101" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
                         output.write("001101" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16))
 
+                    elif "sll" == instruction:
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
+                            sys.exit()
+
+                        print("00000000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 5) + "000000")
+                        output.write("00000000000" + mipsMounter.__regToBin(parameters[0])+ mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 5) + "000000")
+
+                    elif "srl" == instruction:
+                        if len(parameters)!=3:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
+                            sys.exit()
+
+                        print("00000000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 5) + "000010")
+                        output.write("00000000000" + mipsMounter.__regToBin(parameters[0]) + mipsMounter.__regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 5) + "000010")
+
                     # PSEUDO INSTRUCTIONS BELOW
                     elif "move" == instruction:
-                        if len(parameters)!=2: #COLOCAR O PRINT AQUI
+                        if len(parameters)!=2:
+                            print("ERRO DE PARAMETROS NA LINHA" + line)
                             sys.exit()
 
                         print("000000" + mipsMounter.__regToBin(parameters[0]) + "00000" + mipsMounter.__regToBin(parameters[1]) + "00000100000")
