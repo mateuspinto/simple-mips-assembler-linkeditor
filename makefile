@@ -9,4 +9,7 @@ INTP=python3
 MONT = mipsMounter.py
 
 all:
-	$(INTP) $(MONT) -o $(EXINP) $(EXOUT)
+	$(INTP) $(MONT) -o $(EXOUT) $(EXINP)
+
+clear:
+	rm $(EXOUT)

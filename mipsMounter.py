@@ -159,7 +159,7 @@ class mipsMounter(object):
 
 if __name__ == '__main__':
     try:
-        mounter = mipsMounter(str(sys.argv[2]), str(sys.argv[3]))
+        mounter = mipsMounter(str(sys.argv[3]), str(sys.argv[2]))
         mounter.mount()
     except:
         print('FATAL ERROR. INPUT MUST BE "INPUT.ASM -O OUTPUT.BIN"')
