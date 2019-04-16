@@ -8,3 +8,6 @@ or $s1, $s0, $s0
 ori $s1, $s0, 0o76
 sll $s1, $s0, 16
 srl $s1, $s0, 16
+beq $s2, $s3, mateus
+beq $s2, $s3, leandro
+bne $s2, $s3, mateus
