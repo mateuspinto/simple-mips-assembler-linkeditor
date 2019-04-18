@@ -9,5 +9,7 @@ ori $s1, $s0, 0o76
 sll $s1, $s0, 16
 srl $s1, $s0, 16
 beq $s2, $s3, mateus
+# fulline comment
+#dasd
 beq $s2, $s3, leandro
-bne $s2, $s3, mateus
+bne $s2, $s3, mateus # inline comment

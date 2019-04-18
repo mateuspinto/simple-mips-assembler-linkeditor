@@ -3,7 +3,7 @@ import sys
 class mipsMounter(object):
     '''A Mounter for MIPS who turn assembly code into binary code'''
 
-    def __init__(self, inputFilename, outputFilename):
+    def __init__(self, inputFilename, outputFilename, instructionStartAdress = 0, wordSize = 4):
         self.inputFilename = inputFilename
         self.outputFilename = outputFilename
         self.labels = []
@@ -24,6 +24,9 @@ class mipsMounter(object):
                             "$t5":"01101",
                             "$t6":"01110",
                             "$t7":"01111"}
+        self.wordSize = wordSize
+        self.instructionStartAdress = instructionStartAdress
+        self.instructionLastAdress = self.instructionStartAdress - self.wordSize
 
     def printFilenames(self):
         print("Input filename:", self.inputFilename)
@@ -89,8 +92,13 @@ class mipsMounter(object):
             with open(self.outputFilename, "w") as output:
                 for line in input:
 
-                    if(line.startswith("#") or line=='\n' or line==' '): #Ignore comments or blank lines
-                        line = next(input)
+                    while (line.startswith("#") or line.isspace()): #Ignore fullline comments or blank lines
+                        try:
+                            line = next(input)
+                        except:
+                            sys.exit()
+
+                    line = (line.split("#",1))[0] #ignore inline comments
 
                     swap = line.split(" ",1)
                     instruction = swap[0].lower()
@@ -191,12 +199,15 @@ class mipsMounter(object):
                             sys.exit()
 
                         output.write("000000" + self.regToBin(parameters[0]) + "00000" + self.regToBin(parameters[1]) + "00000100000\n")
+                    
+                    else:
+                        print("PARAMETER ERROR ON" + line)
+                        sys.exit()
 
 if __name__ == '__main__':
     try:
         mounter = mipsMounter(str(sys.argv[3]), str(sys.argv[2]))
         mounter.mount()
-
     except:
         print('FATAL ERROR. INPUT MUST BE "INPUT.ASM -O OUTPUT.BIN"')
         sys.exit()
