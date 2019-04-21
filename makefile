@@ -1,6 +1,6 @@
 # change application name here (executable output name)
-EXINP=fibonnaci.asm
-EXOUT=fibonnaci.bin
+EXINP=exemplo.asm
+EXOUT=exemplo.bin
 
 # interpreter
 INTP=python3

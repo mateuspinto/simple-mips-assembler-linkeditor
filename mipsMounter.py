@@ -67,7 +67,7 @@ class mipsMounter(object):
         if str(n).startswith("0B") or str(n).startswith("0b"):
             return mipsMounter.__NumToTc(int(n[2:], 2), bits)
 
-        if str(n).isnumeric():
+        if str(n).replace("-", "").isnumeric():
             return mipsMounter.__NumToTc(int(n), bits) #The general case deals with decimal numbers
 
     def regToBin(self, reg):
