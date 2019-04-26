@@ -70,11 +70,6 @@ class mipsMounter(object):
         if str(n).replace("-", "").isnumeric():
             return mipsMounter.__NumToTc(int(n), bits) #The general case deals with decimal numbers
 
-    def regToBin(self, reg):
-        '''Returns binary representation of MIPS registers'''
-
-        return self.registers[reg]
-
     def __insertLabelReturnBinary(self, newLabel):
         '''Try to find the index of an assembly label. If it not exists, create a new one'''
         try:
@@ -109,73 +104,73 @@ class mipsMounter(object):
                     
                     if "add" == instruction:
                         if len(parameters)!=3:
-                            print("PARAMETER ERROR ON" + line)
+                            print("PARAMETER ERROR ON " + line)
                             sys.exit()
 
-                        output.write("000000" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + self.regToBin(parameters[2]) + "00000100000\n")
+                        output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100000\n")
 
                     elif "sub" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("000000" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + self.regToBin(parameters[2]) + "00000100010\n")
+                        output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100010\n")
 
                     elif "and" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("000000" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + self.regToBin(parameters[2]) + "00000100100\n")
+                        output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100100\n")
 
                     elif "or" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("000000" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + self.regToBin(parameters[2]) + "00000100101\n")
+                        output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100101\n")
 
                     elif "nor" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("000000" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + self.regToBin(parameters[2]) + "00000100111\n")
+                        output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100111\n")
 
                     elif "addi" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("001000" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16) + "\n")
+                        output.write("001000" + self.registers[parameters[0]] + self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 16) + "\n")
 
                     elif "andi" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("001100" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16) + "\n")
+                        output.write("001100" + self.registers[parameters[0]] + self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 16) + "\n")
 
                     elif "ori" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("001101" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 16) + "\n")
+                        output.write("001101" + self.registers[parameters[0]] + self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 16) + "\n")
 
                     elif "sll" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("00000000000" + self.regToBin(parameters[0])+ self.regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 5) + "000000\n")
+                        output.write("00000000000" + self.registers[parameters[0]]+ self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 5) + "000000\n")
 
                     elif "srl" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("00000000000" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + mipsMounter.__numToBinary(parameters[2], 5) + "000010\n")
+                        output.write("00000000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 5) + "000010\n")
 
                     # CONDITIONAL CASES
                     elif "beq" == instruction:
@@ -183,14 +178,14 @@ class mipsMounter(object):
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("000100" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + self.__insertLabelReturnBinary(parameters[2]) + "\n")
+                        output.write("000100" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.__insertLabelReturnBinary(parameters[2]) + "\n")
                     
                     elif "bne" == instruction:
                         if len(parameters)!=3:
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("000101" + self.regToBin(parameters[0]) + self.regToBin(parameters[1]) + self.__insertLabelReturnBinary(parameters[2]) + "\n")
+                        output.write("000101" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.__insertLabelReturnBinary(parameters[2]) + "\n")
 
                     # PSEUDO INSTRUCTIONS BELOW
                     elif "move" == instruction:
@@ -198,7 +193,7 @@ class mipsMounter(object):
                             print("PARAMETER ERROR ON" + line)
                             sys.exit()
 
-                        output.write("000000" + self.regToBin(parameters[0]) + "00000" + self.regToBin(parameters[1]) + "00000100000\n")
+                        output.write("000000" + self.registers[parameters[0]] + "00000" + self.registers[parameters[1]] + "00000100000\n")
                     
                     else:
                         print("PARAMETER ERROR ON" + line)
