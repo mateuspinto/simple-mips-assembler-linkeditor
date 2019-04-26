@@ -3,7 +3,7 @@ import sys
 class mipsMounter(object):
     '''A Mounter for MIPS who turn assembly code into binary code'''
 
-    def __init__(self, inputFilename, outputFilename, instructionStartAdress = 0, wordSize = 4):
+    def __init__(self, inputFilename, outputFilename):
         self.inputFilename = inputFilename
         self.outputFilename = outputFilename
         self.labels = []
