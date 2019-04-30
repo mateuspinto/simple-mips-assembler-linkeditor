@@ -587,15 +587,12 @@ class mipsMounter(object):
             else:
                 self.linkEdited.append(line)
 
-# if __name__ == '__main__':
-#     try:
-#         mounter = mipsMounter(str(sys.argv[3]), str(sys.argv[2]))
-#         mounter.mount()
-#     except:
-#         print('FATAL ERROR. INPUT MUST BE "INPUT.ASM -O OUTPUT.BIN"')
-#         sys.exit()
-
-mounter = mipsMounter("exemplo.asm", "exemplo.bin")
-mounter.mount()
-mounter.linkEdit()
-mounter.saveLinkEdited()
+if __name__ == '__main__':
+    try:
+        mounter = mipsMounter(str(sys.argv[3]), str(sys.argv[2]))
+        mounter.mount()
+        mounter.linkEdit()
+        mounter.saveLinkEdited()
+    except:
+        print('FATAL ERROR. INPUT MUST BE "INPUT.ASM" -o "OUTPUT.BIN"')
+        sys.exit()
