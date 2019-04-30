@@ -24,6 +24,166 @@ class mipsMounter(object):
                             "$t5":"01101",
                             "$t6":"01110",
                             "$t7":"01111"}
+        self.mounted = []
+        self.instructions = {"add":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"100000"
+        },
+        
+        "addu":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"100001"
+        },
+
+        "and":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"100100"
+        },
+
+        "break":{
+            "type":["r"],
+            "inputs":[],
+            "fn":"001101"
+        },
+
+        "div":{
+            "type":"r",
+            "inputs":["rs","rt"],
+            "fn":"011010"
+        },
+
+        
+        "divu":{
+            "type":"r",
+            "inputs":["rs","rt"],
+            "fn":"011011"
+        },
+
+        "mfhi":{
+            "type":"r",
+            "inputs":["rd"],
+            "fn":"010000"
+        },
+
+        "mflo":{
+            "type":"r",
+            "inputs":["rd"],
+            "fn":"010010"
+        },
+
+        "mthi":{
+            "type":"r",
+            "inputs":["rs"],
+            "fn":"010001"
+        },
+
+        "mtlo":{
+            "type":"r",
+            "inputs":["rs"],
+            "fn":"010011"
+        },
+
+        "mult":{
+            "type":"r",
+            "inputs":["rs","rt"],
+            "fn":"011000"
+        },
+
+        "multu":{
+            "type":"r",
+            "inputs":["rs","rt"],
+            "fn":"011001"
+        },
+
+        "nor":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"100111"
+        },
+
+        "or":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"100101"
+        },
+
+        "sll":{
+            "type":"r",
+            "inputs":["rd", "rt","sa"],
+            "fn":"000000"
+        },
+
+        "sllv":{
+            "type":"r",
+            "inputs":["rd", "rt", "rs"],
+            "fn":"000100"
+        },
+
+        "slt":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"101010"
+        },
+
+        "sltu":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"101011"
+        },
+
+        "sra":{
+            "type":"r",
+            "inputs":["rd", "rt", "sa"],
+            "fn":"000011"
+        },
+
+        "srav":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"000111"
+        },
+
+        "srl":{
+            "type":"r",
+            "inputs":["rd","rt","sa"],
+            "fn":"000010"
+        },
+
+        "srlv":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"000110"
+        },
+
+        "sub":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"100010"
+        },
+
+        "subu":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"100011"
+        },
+
+        "syscall":{
+            "type":"r",
+            "inputs":[],
+            "fn":"001100"
+        },
+
+        "xor":{
+            "type":"r",
+            "inputs":["rd", "rs", "rt"],
+            "fn":"001100"
+        }
+        
+        
+        }
 
     def printFilenames(self):
         print("Input filename: ", self.inputFilename)
@@ -75,6 +235,11 @@ class mipsMounter(object):
             self.labels.append(newLabel)
             return mipsMounter.__intToBinary(self.labels.index(newLabel), 16)
 
+    @staticmethod
+    def __lineError(line):
+        print("PARAMETER ERROR ON " + line)
+        sys.exit()
+
     def mount(self):
         '''Turn MIPS assembly code into binary'''
 
@@ -91,116 +256,70 @@ class mipsMounter(object):
 
                         line = (line.split("#",1))[0] #ignore inline comments
 
-                        swap = line.split(" ",1)
-                        instruction = swap[0].lower()
+                        swap = line.split(":")
+                        if len(swap) == 2:
+                            label = swap[0].strip() + ":"
+                            swap = swap[1]
+                        elif len(swap) == 1:
+                            label = ""
+                            swap = swap[0]
+                        else:
+                            self._mipsMounter__lineError
+
+                        swap = swap.split(" ",1)
+                        instruction = swap[0].lower().strip()
                         parameters = swap[1].split(",")
-                        swap = None
 
                         # remove all parameters spaces Ex: "  $s0" turns into "$s0"
                         for i in range(len(parameters)):
                             parameters[i] = parameters[i].strip()
                         
-                        if "add" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
+                        if(instruction in self.instructions):
+                            self.mounted.append(label)
 
-                            output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100000\n")
+                            if(self.instructions[instruction]["type"] == "r"):
 
-                        elif "sub" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
+                                opcode = "000000"
+                                rd = "00000"
+                                rs = "00000"
+                                rt = "00000"
+                                shamt = "00000"
+                                fn = "000000"
 
-                            output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100010\n")
+                                if(len(self.instructions[instruction]["inputs"]) != len(parameters)):
+                                    self._mipsMounter__lineError(line)
+                                    
+                                for input_number, input_name in enumerate(self.instructions[instruction]["inputs"]):
 
-                        elif "and" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
+                                    if input_name == "rs":
+                                        rs = self.registers[parameters[input_number]]
+                                    elif input_name == "rd":
+                                        rd = self.registers[parameters[input_number]]
+                                    elif input_name == "rt":
+                                        rt = self.registers[parameters[input_number]]
+                                    elif input_name == "sa":
+                                        shamt = mipsMounter.__numToBinary(parameters[input_number], 5)
 
-                            output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100100\n")
+                                fn = self.instructions[instruction]["fn"]
 
-                        elif "or" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
+                                self.mounted[len(self.mounted)-1] += (opcode + rd + rs + rt + shamt + fn)
 
-                            output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100101\n")
+                            elif(self.instructions[instruction]["type"] == "i"):
+                                pass
 
-                        elif "nor" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
-
-                            output.write("000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.registers[parameters[2]] + "00000100111\n")
-
-                        elif "addi" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
-
-                            output.write("001000" + self.registers[parameters[0]] + self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 16) + "\n")
-
-                        elif "andi" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
-
-                            output.write("001100" + self.registers[parameters[0]] + self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 16) + "\n")
-
-                        elif "ori" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
-
-                            output.write("001101" + self.registers[parameters[0]] + self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 16) + "\n")
-
-                        elif "sll" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
-
-                            output.write("00000000000" + self.registers[parameters[0]]+ self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 5) + "000000\n")
-
-                        elif "srl" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
-
-                            output.write("00000000000" + self.registers[parameters[0]] + self.registers[parameters[1]] + mipsMounter.__numToBinary(parameters[2], 5) + "000010\n")
-
-                        # CONDITIONAL CASES
-                        elif "beq" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
-
-                            output.write("000100" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.__insertLabelReturnBinary(parameters[2]) + "\n")
-                        
-                        elif "bne" == instruction:
-                            if len(parameters)!=3:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
-
-                            output.write("000101" + self.registers[parameters[0]] + self.registers[parameters[1]] + self.__insertLabelReturnBinary(parameters[2]) + "\n")
-
-                        # PSEUDO INSTRUCTIONS BELOW
-                        elif "move" == instruction:
-                            if len(parameters)!=2:
-                                print("PARAMETER ERROR ON " + line)
-                                sys.exit()
-
-                            output.write("000000" + self.registers[parameters[0]] + "00000" + self.registers[parameters[1]] + "00000100000\n")
+                            elif(self.instructions[instruction]["type"] == "j"):
+                                pass
                         
                         else:
-                            print("PARAMETER ERROR ON " + line)
-                            sys.exit()
+                            self._mipsMounter__lineError(line)
 
-if __name__ == '__main__':
-    try:
-        mounter = mipsMounter(str(sys.argv[3]), str(sys.argv[2]))
-        mounter.mount()
-    except:
-        print('FATAL ERROR. INPUT MUST BE "INPUT.ASM -O OUTPUT.BIN"')
-        sys.exit()
+# if __name__ == '__main__':
+#     try:
+#         mounter = mipsMounter(str(sys.argv[3]), str(sys.argv[2]))
+#         mounter.mount()
+#     except:
+#         print('FATAL ERROR. INPUT MUST BE "INPUT.ASM -O OUTPUT.BIN"')
+#         sys.exit()
+
+mounter = mipsMounter("exemplo.asm", "exemplo.bin")
+mounter.mount()
