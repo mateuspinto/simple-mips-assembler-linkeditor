@@ -278,7 +278,7 @@ class mipsMounter(object):
             "opcode":"100001"
         },
 
-        "lb":{
+        "lhu":{
             "type":"i",
             "inputs":["rt", "imm(rs)"],
             "opcode":"100101"
@@ -347,7 +347,7 @@ class mipsMounter(object):
         "xori":{
             "type":"i",
             "inputs":["rt", "rs", "imm"],
-            "opcode":"110001"
+            "opcode":"001110"
         },
 
         "j":{
