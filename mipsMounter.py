@@ -443,11 +443,16 @@ class mipsMounter(object):
     def mount(self):
         '''Turn MIPS assembly code into binary'''
 
+        labelPreviousLine=""
+
         with open(self.inputFilename, "r") as input:
             for line in input:
 
                 if (line.startswith("#") or line.isspace()): #Ignore fullline comments or blank lines
                     pass
+
+                elif (line.strip().endswith(":")):
+                    labelPreviousLine = line.strip()
 
                 else: # Flow goes here when the line is a MIPS command
 
@@ -502,7 +507,8 @@ class mipsMounter(object):
 
                             fn = self.instructions[instruction]["fn"]
 
-                            self.mounted[len(self.mounted)-1] += (opcode + rs + rt + rd + shamt + fn)
+                            self.mounted[len(self.mounted)-1] += (labelPreviousLine + opcode + rs + rt + rd + shamt + fn)
+                            labelPreviousLine=""
 
                         elif(self.instructions[instruction]["type"] == "i"):
                             
@@ -535,7 +541,8 @@ class mipsMounter(object):
 
                             opcode = self.instructions[instruction]["opcode"]
 
-                            self.mounted[len(self.mounted)-1] += (opcode + rs + rt + imm)
+                            self.mounted[len(self.mounted)-1] += (labelPreviousLine + opcode + rs + rt + imm)
+                            labelPreviousLine=""
                             
 
                         elif(self.instructions[instruction]["type"] == "j"):
@@ -552,7 +559,8 @@ class mipsMounter(object):
 
                             opcode = self.instructions[instruction]["opcode"]
 
-                            self.mounted[len(self.mounted)-1] += (opcode + j)
+                            self.mounted[len(self.mounted)-1] += (labelPreviousLine + opcode + j)
+                            labelPreviousLine=""
                     
                     else:
                         self._mipsMounter__lineError(line)
@@ -575,7 +583,7 @@ class mipsMounter(object):
                 aux = line.split("=")
                 opcode = aux[0]
                 label = aux[1]
-                label = mipsMounter.__numToBinary(self._mipsMounter__labelReturnIndex(label), 26)
+                label = mipsMounter.__numToBinary(int(self._mipsMounter__labelReturnIndex(label)/4), 26)
                 self.linkEdited.append(opcode + label)
 
             elif "-" in line:
@@ -583,18 +591,14 @@ class mipsMounter(object):
                 aux = line.split("-")
                 opcode = aux[0]
                 label = aux[1]
-                label = mipsMounter.__numToBinary(self._mipsMounter__labelReturnIndex(label) - pc, 16)
+                label = mipsMounter.__numToBinary(int((self._mipsMounter__labelReturnIndex(label) - pc)/4), 16)
                 self.linkEdited.append(opcode + label)
 
             else:
                 self.linkEdited.append(line)
 
 if __name__ == '__main__':
-    try:
-        mounter = mipsMounter(str(sys.argv[3]), str(sys.argv[2]))
-        mounter.mount()
-        mounter.linkEdit()
-        mounter.saveLinkEdited()
-    except:
-        print('FATAL ERROR. INPUT MUST BE "INPUT.ASM" -o "OUTPUT.BIN"')
-        sys.exit()
+    mounter = mipsMounter(str(sys.argv[3]), str(sys.argv[2]))
+    mounter.mount()
+    mounter.linkEdit()
+    mounter.saveLinkEdited()
