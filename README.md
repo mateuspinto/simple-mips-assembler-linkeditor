@@ -19,7 +19,7 @@ If you don't have Python 3 installed or you're not sure about this, open your te
     pacman -Sy python3
 After that, open your terminal, clone the rep and put the input and output filenames in the command. ALMa comes with a simple MIPS assembly file called "exemplo.asm".
 
-    git clone https://github.com/mateusps10/ALMa_Mips_Mounter_and_Link_Editor-TP1-OC1-UFV
+    git clone https://github.com/cs-aslan/ALMa_Mips_Mounter_and_Link_Editor-TP1-OC1-UFV
     make all input=exemplo.asm output=exemplo.bin
 ### On Windows based systems
 If you don't have Python 3 installed or you not sure about this, download it [here](https://www.python.org/downloads/windows/)
